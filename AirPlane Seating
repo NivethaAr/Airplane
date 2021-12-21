@@ -1,0 +1,109 @@
+import java.util.*;
+ 
+
+
+public class Test{
+static String totpas="0";
+public static void main (String args[]) {
+	 	Scanner myObj = new Scanner(System.in);  // Create a Scanner object
+	    System.out.println("Please Enter 2 Dimensional Array");
+	    String arrdym = myObj.nextLine(); 
+	    System.out.println("Enter Total Passengers");
+	    totpas = myObj.nextLine(); 
+	    arrdym=arrdym.replaceAll("\\s+", "");
+	    if(totpas.length()>0) {
+	    	try {
+			    int totPasgr=Integer.parseInt(totpas);
+			    String s=arrdym;
+				s=s.replace("],[", "]&[");
+				String s1[]=s.split("&");		
+				HashMap<Integer,int[][]> als=getArray(s1);
+				int wdcnt=0,asscnt=0,centrcnt=0;
+				HashMap<Integer,String[][]> windSht=new HashMap<Integer,String[][]>();
+				 int k=-1;
+				 for(Map.Entry m : als.entrySet()){  
+					 	k++;
+					 	int[][] wd=(int[][])m.getValue();
+					 	String[][] tst=new String[wd.length][wd[0].length];
+					 		for(int i=0;i<wd.length;i++) {
+								for(int j=0;j<wd[0].length;j++) {	
+									if((j == 0 && k==0) || (k+1==als.size() && j+1==wd[0].length) && (k==0 || k+1==als.size())) {
+										tst[i][j]="W";
+										wdcnt=wdcnt+1;
+									}else if(j == 0 || j+1==wd[0].length){
+										tst[i][j]="A";
+										asscnt=asscnt+1;
+									}else {
+										tst[i][j]="C";
+										centrcnt=centrcnt+1;
+									}
+								}
+					 		}
+					 		windSht.put(k+1, tst);
+				 }
+				 int assstart=0;
+				 int windstart=asscnt;
+				 int cntstrt=asscnt+wdcnt;
+				 for(int ij=0;ij<als.size()+1;ij++) {
+					for(Map.Entry m : windSht.entrySet()){ 
+						String[][] arr=(String[][])m.getValue();
+					    for(int l=0;l<arr[0].length;l++) {
+					    	if(ij>=arr.length) {
+					    		System.out.print(String.valueOf(addspace(" "))+" ");
+					    	}else {
+					    		if(arr[ij][l].equals("W")) {
+					    			windstart=windstart+1;
+					    			if(windstart>totPasgr) {
+					    				System.out.print(addspace(String.valueOf(0))+" ");
+					    			}else {
+					    				System.out.print(addspace(String.valueOf(windstart))+" ");	
+					    			}
+					    		}else if(arr[ij][l].equals("A")){			    			
+					    			assstart=assstart+1;
+					    			if(assstart>totPasgr) {
+					    				System.out.print(addspace(String.valueOf(0))+" ");			    				
+					    			}else {
+					    				System.out.print(addspace(String.valueOf(assstart))+" ");
+					    			}
+					    		}else {
+					    			cntstrt=cntstrt+1;
+					    			if(cntstrt>totPasgr) {
+					    				System.out.print(addspace(String.valueOf(0))+" ");			    				
+					    			}else {
+					    				System.out.print(addspace(String.valueOf(cntstrt))+" ");
+					    			}
+					    		}
+					    	}
+						}
+					    System.out.print(String.valueOf(addspace(" "))+" ");
+					 }
+					System.out.println("");							
+				 }
+	    	}catch(Exception e) {
+	    		  System.out.println("Please enter valid 2 Dimensional Array");
+	    	}
+	    }else {
+	    	System.out.println("Please input valid number passengers");
+	    }
+}
+
+public static HashMap<Integer,int[][]> getArray(String[] ss1){
+		int[][] arr=new int[0][0];
+		HashMap<Integer,int[][]> arrlst=new HashMap<Integer,int[][]>();
+		Integer i=0;
+		for(String ss:ss1) {
+			i=i+1;
+			ss=ss.replace("[", "").replace("]", "");
+			String row=Character.toString(ss.charAt(0));
+			String column=Character.toString(ss.charAt(2));
+			int ii=Integer.parseInt(row),jj=Integer.parseInt(column);
+			arr=new int[jj][ii];
+			arrlst.put(i,arr);
+		}
+	return arrlst;
+}
+public static String addspace(String st) {
+	int totspc=totpas.length();
+	return String.format("%1$" + totspc + "s", st);
+}
+}
